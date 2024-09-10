@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplicación de Cartas</title>
+    <style>
+        /* Estilos generales */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-image: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        }
+
+        /* Contenedor principal */
+        .container {
+            background-color: #fff;
+            width: 100%;
+            max-width: 700px;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            border: 2px solid #ddd;
+            transition: all 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+        }
+
+        /* Encabezado */
+        header {
+            background-color: #3e8ed0;
+            color: white;
+            text-align: center;
+            padding: 1.5em 0;
+            font-size: 2em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 5px solid #2b6ba6;
+        }
+
+        /* Reglas del juego */
+        .rules-container {
+            padding: 2em;
+            background-color: #f0faff;
+            border-bottom: 2px solid #ddd;
+            text-align: center;
+        }
+
+        .rules-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 1em;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .rules-content {
+            font-size: 1.1em;
+            color: #555;
+            line-height: 1.6;
+            text-align: center;
+            margin-bottom: 2em;
+        }
+
+        /* Botón centrado */
+        .center-button {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Contenedor de las cartas */
+        .card-container {
+            padding: 2.5em;
+            text-align: center;
+            display: none;
+            background-color: #fff;
+        }
+
+        /* Estilo de las cartas */
+        .card {
+            background-color: #fafafa;
+            border-radius: 12px;
+            border: 3px solid #ddd;
+            padding: 2em;
+            margin-bottom: 1.5em;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            font-family: 'Verdana', sans-serif;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Título de las cartas */
+        .card-title {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 1em;
+            color: #333;
+        }
+
+        /* Contenido de las cartas */
+        .card-content {
+            font-size: 1.3em;
+            color: #555;
+            margin-bottom: 1.5em;
+        }
+
+        /* Botones */
+        button {
+            background-color: #3e8ed0;
+            color: white;
+            border: none;
+            padding: 0.8em 2em;
+            font-size: 1.1em;
+            cursor: pointer;
+            border-radius: 10px;
+            margin-top: 1em;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #2b6ba6;
+            transform: scale(1.05);
+        }
+
+        /* Footer */
+        footer {
+            background-color: #3e8ed0;
+            color: white;
+            text-align: center;
+            padding: 1em;
+            font-size: 0.8em;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            Aplicación de Cartas
+        </header>
+
+        <!-- Sección de reglas -->
+        <div id="rules" class="rules-container">
+            <div class="rules-title">Reglas del Juego</div>
+            <div class="rules-content">
+                1. Haga clic en "Iniciar Juego" para comenzar.<br>
+                2. Las cartas se mostrarán una por una y no se repetirán hasta que todas hayan sido mostradas.<br>
+                3. Recibirá una notificación cuando todas las cartas se hayan mostrado.
+            </div>
+            <div class="center-button">
+                <button onclick="iniciarJuego()">Iniciar Juego</button>
+            </div>
+        </div>
+
+        <!-- Sección de cartas -->
+        <div id="card-container" class="card-container">
+            <div id="card" class="card">
+                <div class="card-title" id="card-title"></div>
+                <div class="card-content" id="card-content"></div>
+            </div>
+
+            <button onclick="mostrarCarta()">Siguiente Carta</button>
+        </div>
+
+        <footer>
+            © 2024 - Aplicación de Cartas. Todos los derechos reservados.
+        </footer>
+    </div>
+
+    <script>
+        // Generar 60 cartas con diferentes colores
+        const cartas = Array.from({ length: 60 }, (_, i) => ({
+            titulo: `Carta ${i + 1}`,
+            contenido: `Esta es la descripción o el texto que aparece en la Carta ${i + 1}.`,
+            color: `hsl(${i * 6}, 100%, 85%)`
+        }));
+
+        let cartasMostradas = [];
+
+        function iniciarJuego() {
+            document.getElementById('rules').style.display = 'none';
+            document.getElementById('card-container').style.display = 'block';
+            mostrarCarta();
+        }
+
+        function mostrarCarta() {
+            if (cartasMostradas.length === cartas.length) {
+                alert("¡Se han mostrado todas las cartas! Volverás a las reglas.");
+                cartasMostradas = [];
+                document.getElementById('card-container').style.display = 'none';
+                document.getElementById('rules').style.display = 'block';
+                return;
+            }
+
+            let cartaAleatoria;
+            do {
+                cartaAleatoria = cartas[Math.floor(Math.random() * cartas.length)];
+            } while (cartasMostradas.includes(cartaAleatoria));
+
+            cartasMostradas.push(cartaAleatoria);
+
+            // Cambiar el color de fondo según la carta
+            document.getElementById('card').style.backgroundColor = cartaAleatoria.color;
+
+            document.getElementById('card-title').innerText = cartaAleatoria.titulo;
+            document.getElementById('card-content').innerText = cartaAleatoria.contenido;
+        }
+    </script>
+
+</body>
+</html>
